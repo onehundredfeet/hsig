@@ -19,8 +19,7 @@ import haxe.extern.EitherType;
  *  The API is based off massiveinteractive's msignal and Robert Penner’s AS3 Signals, however is greatly simplified.
  */
 @:expose("Signal")
-class Signal extends BaseSignal<()->Void> {
-
+class Signal extends BaseSignal<() -> Void> {
 	public function new(?fireOnAdd:Bool = false) {
 		super(fireOnAdd);
 	}
@@ -30,19 +29,19 @@ class Signal extends BaseSignal<()->Void> {
 		dispatchCallbacks();
 	}
 
-	override function dispatchCallback(callback:()->Void) {
+	override function dispatchCallback(callback:() -> Void) {
 		callback();
 	}
 
-	override function dispatchCallback1(callback:(Dynamic)->Void) {
+	override function dispatchCallback1(callback:(Dynamic) -> Void) {
 		throw "Use Signal 1";
 	}
 
-	override function dispatchCallback2(callback:(Dynamic, Dynamic)->Void) {
+	override function dispatchCallback2(callback:(Dynamic, Dynamic) -> Void) {
 		throw "Use Signal 2";
 	}
 
-	override function dispatchCallback3(callback:(Dynamic, Dynamic, Dynamic)->Void) {
+	override function dispatchCallback3(callback:(Dynamic, Dynamic, Dynamic) -> Void) {
 		throw "Use Signal 3";
 	}
 }
@@ -118,19 +117,19 @@ class BaseSignal<Callback> {
 		toTrigger = [];
 	}
 
-	function dispatchCallback(callback:()->Void) {
+	function dispatchCallback(callback:() -> Void) {
 		throw "implement in override";
 	}
 
-	function dispatchCallback1(callback:(Dynamic)->Void) {
+	function dispatchCallback1(callback:(Dynamic) -> Void) {
 		throw "implement in override";
 	}
 
-	function dispatchCallback2(callback:(Dynamic, Dynamic)->Void) {
+	function dispatchCallback2(callback:(Dynamic, Dynamic) -> Void) {
 		throw "implement in override";
 	}
 
-	function dispatchCallback3(callback:(Dynamic, Dynamic, Dynamic)->Void) {
+	function dispatchCallback3(callback:(Dynamic, Dynamic, Dynamic) -> Void) {
 		throw "implement in override";
 	}
 
@@ -189,7 +188,7 @@ class BaseSignal<Callback> {
 			currentCallback.dispatchMethod = dispatchCallback1;
 		} else if (numParams == 2) {
 			currentCallback.dispatchMethod = dispatchCallback2;
-		} else if(numParams == 3){
+		} else if (numParams == 3) {
 			currentCallback.dispatchMethod = dispatchCallback3;
 		}
 
@@ -206,7 +205,7 @@ class BaseSignal<Callback> {
 	}
 
 	function getNumParams(callback:Callback):Int {
-		#if(!static)
+		#if (!static )
 		var length:Null<Int> = Reflect.getProperty(callback, 'length');
 		if (length != null) {
 			return length;
@@ -257,17 +256,18 @@ class BaseSignal<Callback> {
 		currentCallback.dispatchMethod(currentCallback.callback);
 	}
 
-	public function remove(callback:EitherType<Bool, Callback> = false):Void {
-		if (callback == true) {
-			callbacks = [];
-		} else {
-			var j:Int = 0;
-			while (j < callbacks.length) {
-				if (callbacks[j].callback == callback) {
-					callbacks.splice(j, 1);
-				} else {
-					j++;
-				}
+	public function removeAll() {
+		callbacks.resize(0);
+	}
+
+	public function remove(callback:Callback):Void {
+		var j:Int = 0;
+		while (j < callbacks.length) {
+			if (callbacks[j].callback == callback) {
+				callbacks[j] = callbacks[callbacks.length - 1];
+				callbacks.pop();
+			} else {
+				j++;
 			}
 		}
 	}
@@ -280,7 +280,7 @@ typedef SignalCallbackData = {
 	repeat:Int,
 	priority:Int,
 	remove:Bool,
-	?dispatchMethod:(Dynamic)->Void
+	?dispatchMethod:(Dynamic) -> Void
 }
 
 typedef Signal0 = Signal
