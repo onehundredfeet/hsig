@@ -1,7 +1,8 @@
-import signals.Signal;
-import signals.Signal1;
-import signals.Signal2;
-import signals.Signal3;
+import hsig.Signal;
+import hsig.Signal1;
+import hsig.Signal2;
+import hsig.Signal3;
+import hsig.Signal4;
 
 class BasicExample
 {
@@ -22,5 +23,9 @@ class BasicExample
         var signal3 = new Signal3<String, Int, Float>();
         signal3.add((_,_,_) -> trace('hello world!'));
         signal3.dispatch("hi", 0, -1.);
+
+        var signal4 = new Signal4<String, Int, Float, Signal>();
+        signal4.add((_,_,_, _) -> trace('hello world!'));
+        signal4.dispatch("hi", 0, -1., null);
     }
 }

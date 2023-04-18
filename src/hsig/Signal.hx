@@ -14,12 +14,23 @@
 
 package hsig;
 
-private class Signal0CallbackData extends SignalCallbackData {
+
+private final class Signal0CallbackData extends SignalCallbackData {
 
 	public var callback:()->Void;
-	public function new(callback:()->Void, priority:Int) {
-		super( priority);
+	var _signal:Signal;
+
+	public function new(signal: Signal, callback:()->Void, priority:Int) {
+		super(  priority);
 		this.callback = callback;
+		_signal = signal;
+
+	}
+	function signal() : IBaseSignal {
+		return _signal;
+	}
+	function fire() : Void {
+		_signal._dispatch(this);
 	}
 }
 
@@ -27,7 +38,7 @@ private class Signal0CallbackData extends SignalCallbackData {
  *  The API is based off massiveinteractive's msignal and Robert Penner’s AS3 Signals, however is greatly simplified.
  */
 @:expose("Signal")
-class Signal extends BaseSignal<Signal0CallbackData> {
+class Signal extends BaseSignal<Signal0CallbackData> implements IBaseSignal {
 	public function new(?fireOnAdd:Bool = false) {
 		super(fireOnAdd);
 	}
@@ -38,7 +49,7 @@ class Signal extends BaseSignal<Signal0CallbackData> {
 	}
 
 	final inline override function _dispatch(cb:Signal0CallbackData) {
-		cb.callCount++;
+		cb._callCount++;
 		cb.callback();
 	}
 
@@ -49,20 +60,20 @@ class Signal extends BaseSignal<Signal0CallbackData> {
 	 *
 	 * @return BaseSignal
 	 */
-	 public function add(callback:()->Void, priority = 0):SignalOptions<Signal0CallbackData> {
-		currentCallback = new Signal0CallbackData(callback, priority);
+	 public function add(callback:()->Void, priority = 0):Signal0CallbackData {
+		var currentCallback = new Signal0CallbackData(this, callback, priority);
 		callbacks.push(currentCallback);
 
 		if (this._fireOnAdd == true) {
 			callback();
 		}
 
-		return this;
+		return currentCallback;
 	}
 
 
 
-	public function remove(callback:()->Void):Void {
+	public function removeByFunc(callback:()->Void):Void {
 		var j:Int = 0;
 		while (j < callbacks.length) {
 			if (callbacks[j].callback == callback) {

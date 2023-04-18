@@ -13,14 +13,15 @@
 package hsig;
 // Heavily derived from https://github.com/peteshand/signals, with modification by https://github.com/onehundredfeet
 
-private class Signal1CallbackData<T> extends SignalCallbackData {
+private class Signal4CallbackData<T0, T1, T2, T3> extends SignalCallbackData {
 
-	public var callback:(T)->Void;
-	var _signal : Signal1<T>;
-	public function new(signal: Signal1<T>, callback:(T)->Void, priority:Int) {
+	public var callback:(T0,T1,T2,T3)->Void;
+	var _signal :  Signal4<T0, T1, T2, T3>;
+
+	public function new(signal : Signal4<T0, T1, T2, T3>, callback:(T0,T1,T2,T3)->Void, priority:Int) {
 		super( priority);
 		this.callback = callback;
-		this._signal = signal;
+		_signal = signal;
 	}
 
 	function signal() : IBaseSignal {
@@ -31,52 +32,71 @@ private class Signal1CallbackData<T> extends SignalCallbackData {
 	}
 }
 
-@:expose("Signal1")
-class Signal1<T> extends BaseSignal<Signal1CallbackData<T>> {
-	public var value(default,null):T;
+
+@:expose("Signal4")
+class Signal4<T0, T1, T2, T3> extends BaseSignal<Signal4CallbackData<T0, T1, T2, T3>> {
+	public var value1(default,null):T0;
+	public var value2(default,null):T1;
+	public var value3(default,null):T2;
+	public var value4(default,null):T3;
+
 
 	public function new(?fireOnAdd:Bool = false) {
 		super(fireOnAdd);
 	}
 
-		/**
+	final inline override function _dispatch(cb: Signal4CallbackData<T0, T1, T2, T3>) {
+		cb._callCount++;
+		cb.callback(value1, value2, value3, value4);
+	}
+
+	/**
 	 * Use the .add method to register callbacks to be fired upon signal.dispatch
 	 *
 	 * @param callback A callback function which will be called when the signal's ditpatch method is fired.
 	 *
 	 * @return BaseSignal
 	 */
-	 public function add(callback:(T)->Void, priority = 0):Signal1CallbackData<T> {
-		var currentCallback = new Signal1CallbackData(this,callback, priority);
+	 public function add(callback:(T0, T1, T2, T3)->Void, priority = 0):Signal4CallbackData<T0,T1,T2,T3> {
+		var currentCallback = new Signal4CallbackData(this, callback, priority);
 		callbacks.push(currentCallback);
 
 		if (this._fireOnAdd == true) {
-			callback(value);
+			callback(value1,value2, value3, value4);
 		}
 
 		return currentCallback;
 	}
 
-	final inline override function _dispatch(cb: Signal1CallbackData<T>) {
-		cb._callCount++;
-		cb.callback(value);
-	}
-
-
-	public inline function dispatch(value1:T) {
+	public function dispatch(value1:T0, value2:T1, value3:T2, value4:T3) {
 		sortPriority();
-		this.value = value1;
+		this.value1 = value1;
+		this.value2 = value2;
+		this.value3 = value3;
+		this.value4 = value4;
+		dispatchCallbacks();
+	}
+	public function dispatchDistinctAny(value1:T0, value2:T1, value3:T2, value4:T3) {
+		if (this.value1 == value1 && this.value2 == value2 && this.value3 == value3 && this.value4 == value4) return;
+		sortPriority();
+		this.value1 = value1;
+		this.value2 = value2;
+		this.value3 = value3;
+		this.value4 = value4;
 		dispatchCallbacks();
 	}
 
-	public inline function dispatchDistinct(value1:T) {
-		if (value1 == value) return;
+	public function dispatchDistinctAll(value1:T0, value2:T1, value3:T2, value4:T3) {
+		if (this.value1 == value1 || this.value2 == value2 || this.value3 == value3 || this.value4 == value4) return;
 		sortPriority();
-		this.value = value1;
+		this.value1 = value1;
+		this.value2 = value2;
+		this.value3 = value3;
+		this.value4 = value4;
 		dispatchCallbacks();
 	}
 
-	public function removeByFunc(callback:(T)->Void):Void {
+	public function removeByFunc(callback:(T0, T1,T2,T3)->Void):Void {
 		var j:Int = 0;
 		while (j < callbacks.length) {
 			if (callbacks[j].callback == callback) {
@@ -88,5 +108,3 @@ class Signal1<T> extends BaseSignal<Signal1CallbackData<T>> {
 		}
 	}
 }
-
-// Void->Void // T->Void

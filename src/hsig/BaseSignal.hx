@@ -14,7 +14,8 @@
 package hsig;
 
 
-class BaseSignal<TCB : SignalCallbackData> {
+
+class BaseSignal<TCB : SignalCallbackData> implements IBaseSignal {
 	#if js
 	@:noCompletion private static function __init__() {
 		untyped Object.defineProperties(BaseSignal.prototype, {
@@ -33,9 +34,12 @@ class BaseSignal<TCB : SignalCallbackData> {
 	public var numListeners(get, null):Int;
 	public var hasListeners(get, null):Bool;
 
-	public var _fireOnAdd:Bool = false;
+	var _fireOnAdd:Bool = false;
 
-	var currentCallback:TCB;
+	public function  isFireOnAdd():Bool {
+		return _fireOnAdd;
+	}
+
 	var callbacks:Array<TCB> = [];
 	var toTrigger:Array<TCB> = [];
 	var requiresSort:Bool = false;
@@ -44,6 +48,9 @@ class BaseSignal<TCB : SignalCallbackData> {
         // override
     }
 
+	public function setDirty() {
+		requiresSort = true;
+	}
 
 
 	public function new(?fireOnAdd:Bool = false) {
@@ -61,10 +68,10 @@ class BaseSignal<TCB : SignalCallbackData> {
 		var i:Int = 0;
 		while (i < callbacks.length) {
 			var callbackData = callbacks[i];
-			if (callbackData.repeat < 0 || callbackData.callCount <= callbackData.repeat) {
+			if (callbackData._repeat < 0 || callbackData._callCount <= callbackData._repeat) {
 				toTrigger.push(callbackData);
 			} else {
-				callbackData.remove = true;
+				callbackData._remove = true;
 			}
 			i++;
 		}
@@ -73,7 +80,7 @@ class BaseSignal<TCB : SignalCallbackData> {
 		var j:Int = callbacks.length - 1;
 		while (j >= 0) {
 			var callbackData = callbacks[j];
-			if (callbackData.remove == true) {
+			if (callbackData._remove == true) {
 				callbacks.splice(j, 1);
 			}
 			j--;
@@ -91,10 +98,21 @@ class BaseSignal<TCB : SignalCallbackData> {
 		callbacks.resize(0);
 	}
 
+	public function remove(data: SignalCallbackData) {
+		var j:Int = 0;
+		while (j < callbacks.length) {
+			if (callbacks[j] == data) {
+				callbacks[j] = callbacks[callbacks.length - 1];
+				callbacks.pop();
+			} else {
+				j++;
+			}
+		}
+	}
 	function sortCallbacks(s1:SignalCallbackData, s2:SignalCallbackData):Int {
-		if (s1.priority > s2.priority)
+		if (s1._priority > s2._priority)
 			return -1;
-		else if (s1.priority < s2.priority)
+		else if (s1._priority < s2._priority)
 			return 1;
 		else
 			return 0;

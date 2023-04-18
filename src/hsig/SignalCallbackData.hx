@@ -11,18 +11,68 @@
 	WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package hsig;
+
+import hsig.IBaseSignal;
+
 // Heavily derived from https://github.com/peteshand/signals, with modification by https://github.com/onehundredfeet
 
 
-class SignalCallbackData {
-	public inline function new( priority:Int) {
-		this.priority = priority;
+@:allow(hsig.IBaseSignal)
+abstract class SignalCallbackData {
+	public inline function new(  priority:Int) {
+		this._priority = priority;
 	}
 
-	public var callCount:Int = 0;
-	public var repeat:Int = -1;
-	public var priority:Int;
-	public var remove:Bool = false;
-
+	 var _callCount:Int = 0;
+	 var _repeat:Int = -1;
+	 var _priority:Int;
+	 var _remove:Bool = false;
    
+	 abstract function signal() : IBaseSignal;
+
+	 /**
+	 * Use the ._priority method to specifies the _priority the order in which callbacks are fired, higher values will be triggered first.
+	 *
+	 * @param value An optional Int that specifies the _priority the order in which callbacks are fired, higher values will be triggered first.
+	 *
+	 * @return BaseSignal
+	 */
+	public inline function priority(value:Int):SignalCallbackData {
+		if (value != _priority) {
+			_priority = value;
+			signal().setDirty();
+		}
+
+		return this;
+	}
+
+	/**
+	 * Use the .repeat method to define the number of times the callback should be triggered before removing itself. Default value = -1 which means it will not remove itself.
+	 *
+	 * @param value An Int that specifies the number of repeats before automatically removing itself.
+	 *
+	 * @return BaseSignal
+	 */
+	public inline function repeat(value:Int = -1):SignalCallbackData {
+		if (_repeat != value) {
+			_repeat = value;
+			signal().setDirty();
+		}
+		return this;
+	}
+
+	/**
+	 * Use the .fireOnAdd method that if called will immediately call the most recently added callback.
+	 *
+	 * @return Void
+	 */
+	public inline function fireOnAdd():SignalCallbackData {
+		if (!signal().isFireOnAdd()) {
+			fire();
+		}
+		return this;
+	}
+
+	abstract function fire() : Void;
+
 }
