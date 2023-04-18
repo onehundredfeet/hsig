@@ -1,40 +1,69 @@
 package signals;
 
-import haxe.extern.EitherType;
-import signals.Signal.BaseSignal;
+private class Signal1CallbackData<T> extends SignalCallbackData {
 
-typedef Func0or1<T> = EitherType<()->Void, (T)->Void>;
+	public var callback:(T)->Void;
+	public function new(callback:(T)->Void, priority:Int) {
+		super( priority);
+		this.callback = callback;
+	}
+}
 
 @:expose("Signal1")
-class Signal1<T> extends BaseSignal<Func0or1<T>> {
-	public var value:T;
+class Signal1<T> extends BaseSignal<Signal1CallbackData<T>> {
+	public var value(default,null):T;
 
-	override public function new(){
-		super();
-		this.valence = 1;
+	public function new(?fireOnAdd:Bool = false) {
+		super(fireOnAdd);
 	}
 
-	public function dispatch(value1:T) {
+		/**
+	 * Use the .add method to register callbacks to be fired upon signal.dispatch
+	 *
+	 * @param callback A callback function which will be called when the signal's ditpatch method is fired.
+	 *
+	 * @return BaseSignal
+	 */
+	 public function add(callback:(T)->Void, priority = 0):SignalOptions<Signal1CallbackData<T>> {
+		currentCallback = new Signal1CallbackData(callback, priority);
+		callbacks.push(currentCallback);
+
+		if (this._fireOnAdd == true) {
+			callback(value);
+		}
+
+		return this;
+	}
+
+	final inline override function _dispatch(cb: Signal1CallbackData<T>) {
+		cb.callCount++;
+		cb.callback(value);
+	}
+
+
+	public inline function dispatch(value1:T) {
 		sortPriority();
 		this.value = value1;
 		dispatchCallbacks();
-		value = null;
 	}
 
-	override function dispatchCallback(callback:()->Void) {
-		callback();
+	public inline function dispatchDistinct(value1:T) {
+		if (value1 == value) return;
+		sortPriority();
+		this.value = value1;
+		dispatchCallbacks();
 	}
 
-	override function dispatchCallback1(callback:(Dynamic)->Void) {
-		callback(value);
-	}
-
-	override function dispatchCallback2(callback:(Dynamic,Dynamic)->Void) {
-		throw "Use Signal 2";
-	}
-
-	override function dispatchCallback3(callback:(Dynamic, Dynamic, Dynamic)->Void) {
-		throw "Use Signal 3";
+	public function remove(callback:(T)->Void):Void {
+		var j:Int = 0;
+		while (j < callbacks.length) {
+			if (callbacks[j].callback == callback) {
+				callbacks[j] = callbacks[callbacks.length - 1];
+				callbacks.pop();
+			} else {
+				j++;
+			}
+		}
 	}
 }
 

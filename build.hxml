@@ -1,0 +1,7 @@
+-debug
+-D advanced-telemetry
+
+--class-path ./src
+--class-path ./example
+-main BasicExample 
+-hl bin/basic.hl
