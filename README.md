@@ -2,6 +2,8 @@
 
 A simple and light weight event system replacement.
 
+Fork from: https://github.com/peteshand/signals
+
 ## Performance
 
 ![performance](readme/performance.jpg)
