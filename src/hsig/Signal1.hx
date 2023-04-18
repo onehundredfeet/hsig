@@ -13,6 +13,7 @@
 package hsig;
 // Heavily derived from https://github.com/peteshand/signals, with modification by https://github.com/onehundredfeet
 
+@:generic
 private class Signal1CallbackData<T> extends SignalCallbackData {
 
 	public var callback:(T)->Void;
@@ -32,6 +33,7 @@ private class Signal1CallbackData<T> extends SignalCallbackData {
 }
 
 @:expose("Signal1")
+@:generic
 class Signal1<T> extends BaseSignal<Signal1CallbackData<T>> {
 	public var value(default,null):T;
 
