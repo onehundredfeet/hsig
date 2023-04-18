@@ -1,4 +1,4 @@
-package signals;
+package hsig;
 
 class SignalCallbackData {
 	public inline function new( priority:Int) {

@@ -1,4 +1,4 @@
-package signals;
+package hsig;
 private class Signal3CallbackData<T0, T1, T2> extends SignalCallbackData {
 
 	public var callback:(T0,T1,T2)->Void;

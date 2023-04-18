@@ -1,4 +1,4 @@
-package signals;
+package hsig;
 
 
 class BaseSignal<TCB : SignalCallbackData> {

@@ -1,4 +1,4 @@
-package signals;
+package hsig;
 
 private class Signal2CallbackData<T0, T1> extends SignalCallbackData {
 
