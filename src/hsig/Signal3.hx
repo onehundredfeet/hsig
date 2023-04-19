@@ -28,7 +28,7 @@ private class Signal3CallbackData<T0, T1, T2> extends SignalCallbackData {
 		return _signal;
 	}
 	function fire() : Void {
-		_signal._dispatch(this);
+		@:privateAccess _signal._fireCB(this);
 	}
 }
 
@@ -45,7 +45,7 @@ class Signal3<T0, T1, T2> extends BaseSignal<Signal3CallbackData<T0, T1, T2>> {
 		super(fireOnAdd);
 	}
 
-	final inline override function _dispatch(cb: Signal3CallbackData<T0, T1, T2>) {
+	final inline override function _fireCB(cb: Signal3CallbackData<T0, T1, T2>) {
 		cb._callCount++;
 		cb.callback(value1, value2, value3);
 	}

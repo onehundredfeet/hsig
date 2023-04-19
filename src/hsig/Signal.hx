@@ -30,7 +30,7 @@ private final class Signal0CallbackData extends SignalCallbackData {
 		return _signal;
 	}
 	function fire() : Void {
-		_signal._dispatch(this);
+		@:privateAccess _signal._fireCB(this);
 	}
 }
 
@@ -48,7 +48,7 @@ class Signal extends BaseSignal<Signal0CallbackData> implements IBaseSignal {
 		dispatchCallbacks();
 	}
 
-	final inline override function _dispatch(cb:Signal0CallbackData) {
+	final inline override function _fireCB(cb:Signal0CallbackData) {
 		cb._callCount++;
 		cb.callback();
 	}

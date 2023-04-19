@@ -44,7 +44,7 @@ class BaseSignal<TCB : SignalCallbackData> implements IBaseSignal {
 	var toTrigger:Array<TCB> = [];
 	var requiresSort:Bool = false;
 
-    public function _dispatch(cb:TCB) {
+    function _fireCB(cb:TCB) {
         // override
     }
 
@@ -88,7 +88,7 @@ class BaseSignal<TCB : SignalCallbackData> implements IBaseSignal {
 
 		for (l in 0...toTrigger.length) {
 			if (toTrigger[l] != null) {
-				_dispatch(toTrigger[l]);
+				_fireCB(toTrigger[l]);
 			}
 		}
 		toTrigger.resize(0);
