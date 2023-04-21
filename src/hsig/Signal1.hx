@@ -59,19 +59,19 @@ class Signal1<T> extends BaseSignal<Signal1CallbackData<T>> {
 		return currentCallback;
 	}
 
-	final inline override function _fireCB(cb: Signal1CallbackData<T>) {
+	final override function _fireCB(cb: Signal1CallbackData<T>) {
 		cb._callCount++;
 		cb.callback(value);
 	}
 
 
-	public inline function dispatch(value1:T) {
+	public function dispatch(value1:T) {
 		sortPriority();
 		this.value = value1;
 		dispatchCallbacks();
 	}
 
-	public inline function dispatchDistinct(value1:T) {
+	public function dispatchDistinct(value1:T) {
 		if (value1 == value) return;
 		sortPriority();
 		this.value = value1;

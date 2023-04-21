@@ -46,7 +46,7 @@ class Signal4<T0, T1, T2, T3> extends BaseSignal<Signal4CallbackData<T0, T1, T2,
 		super(fireOnAdd);
 	}
 
-	final inline override function _fireCB(cb: Signal4CallbackData<T0, T1, T2, T3>) {
+	final override function _fireCB(cb: Signal4CallbackData<T0, T1, T2, T3>) {
 		cb._callCount++;
 		cb.callback(value1, value2, value3, value4);
 	}

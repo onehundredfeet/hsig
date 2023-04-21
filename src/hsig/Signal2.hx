@@ -60,13 +60,13 @@ class Signal2<T0, T1> extends BaseSignal<Signal2CallbackData<T0, T1>> {
 		return currentCallback;
 	}
 
-	final inline override function _fireCB(cb: Signal2CallbackData<T0, T1>) {
+	final override function _fireCB(cb: Signal2CallbackData<T0, T1>) {
 		cb._callCount++;
 		cb.callback(value1, value2);
 	}
 
 
-	public inline function dispatch(value1:T0, value2:T1) {
+	public function dispatch(value1:T0, value2:T1) {
 		sortPriority();
 		this.value1 = value1;
 		this.value2 = value2;

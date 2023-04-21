@@ -48,7 +48,7 @@ class Signal extends BaseSignal<Signal0CallbackData> implements IBaseSignal {
 		dispatchCallbacks();
 	}
 
-	final inline override function _fireCB(cb:Signal0CallbackData) {
+	final override function _fireCB(cb:Signal0CallbackData) {
 		cb._callCount++;
 		cb.callback();
 	}

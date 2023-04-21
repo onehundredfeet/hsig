@@ -19,7 +19,7 @@ import hsig.IBaseSignal;
 
 @:allow(hsig.IBaseSignal)
 abstract class SignalCallbackData {
-	public inline function new(  priority:Int) {
+	public function new(  priority:Int) {
 		this._priority = priority;
 	}
 
@@ -37,7 +37,7 @@ abstract class SignalCallbackData {
 	 *
 	 * @return BaseSignal
 	 */
-	public inline function priority(value:Int):SignalCallbackData {
+	public function priority(value:Int):SignalCallbackData {
 		if (value != _priority) {
 			_priority = value;
 			signal().setDirty();
@@ -53,7 +53,7 @@ abstract class SignalCallbackData {
 	 *
 	 * @return BaseSignal
 	 */
-	public inline function repeat(value:Int = -1):SignalCallbackData {
+	public function repeat(value:Int = -1):SignalCallbackData {
 		if (_repeat != value) {
 			_repeat = value;
 			signal().setDirty();
@@ -66,7 +66,7 @@ abstract class SignalCallbackData {
 	 *
 	 * @return Void
 	 */
-	public inline function fireOnAdd():SignalCallbackData {
+	public function fireOnAdd():SignalCallbackData {
 		if (!signal().isFireOnAdd()) {
 			fire();
 		}
