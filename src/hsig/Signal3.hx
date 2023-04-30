@@ -30,6 +30,9 @@ private class Signal3CallbackData<T0, T1, T2> extends SignalCallbackData {
 	function fire() : Void {
 		@:privateAccess _signal._fireCB(this);
 	}
+	public function remove() : Void {
+		@:privateAccess _signal.remove(this);
+	}
 }
 
 

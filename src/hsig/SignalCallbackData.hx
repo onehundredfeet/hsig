@@ -74,5 +74,5 @@ abstract class SignalCallbackData {
 	}
 
 	abstract function fire() : Void;
-
+	public abstract function remove() : Void;
 }
