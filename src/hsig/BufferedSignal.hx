@@ -31,6 +31,14 @@ class BufferedSignal extends Signal {
 		}
 	}
 
+	public function dispatchCollapsed() {
+		if (_times > 0) {
+			sortPriority();
+			_times = 0;
+			dispatchCallbacks();
+		}
+	}
+
 	public function clear() {
 		_times = 0;
 	}

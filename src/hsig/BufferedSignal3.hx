@@ -58,6 +58,21 @@ class BufferedSignal3<T0, T1, T2> extends Signal3<T0, T1, T2> {
 		}
 	}
 
+	public function dispatchCollapsed() {
+		if (_queue.length > 0) {
+			sortPriority();
+			var v = _queue[_queue.length - 1];
+			this.value1 = v.value1;
+			this.value2 = v.value2;
+			this.value3 = v.value3;
+			while (_queue.length > 0) {
+				v = _queue.pop();
+				_freeList.push(v);
+			}
+			dispatchCallbacks();
+		}
+	}
+
 	public function clear() {
 		while (_queue.length > 0) {
 			var v = _queue.pop();

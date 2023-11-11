@@ -39,6 +39,11 @@ class BasicExample
         bufSignal2.dispatchDistinctAny("hi there", 2);
         trace('Waiting...');
         bufSignal2.dispatchBuffered();
+        bufSignal2.dispatchCollapsed();
+        bufSignal2.dispatch("never", 0);
+        bufSignal2.dispatch("seen", 1);
+        bufSignal2.dispatchCollapsed();
+
 
 
         var bufSignal2 = new BufferedSignal1<String>();

@@ -32,6 +32,15 @@ class BufferedSignal1<T0> extends Signal1<T0> {
 		}
 	}
 
+	public function dispatchCollapsed() {
+		if (_queue.length > 0) {
+			sortPriority();
+			this.value = _queue[_queue.length - 1];
+			_queue.resize(0);
+			dispatchCallbacks();
+		}
+	}
+
 	public function clear() {
 		_queue.resize(0);	
 	}

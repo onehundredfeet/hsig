@@ -15,12 +15,12 @@ package hsig;
 
 @:generic
 private class QueueIitem2<T0, T1> {
-	public function new(value0:T0, value1:T1) {
-		this.value0 = value0;
+	public function new(value1:T0, value2:T1) {
 		this.value1 = value1;
+		this.value2 = value2;
 	}
-	public var value0 : T0;
-	public var value1 : T1;
+	public var value1 : T0;
+	public var value2 : T1;
 }
 
 @:expose("BufferedSignal2")
@@ -33,8 +33,8 @@ class BufferedSignal2<T0, T1> extends Signal2<T0, T1> {
 	public override function dispatch(value1:T0, value2:T1) {
 		if (_freeList.length > 0) {
 			var item = _freeList.pop();
-			item.value0 = value1;
-			item.value1 = value2;
+			item.value1 = value1;
+			item.value2 = value2;
 			_queue.push(item);
 		} else {
 			_queue.push(new QueueIitem2<T0, T1>(value1, value2));
@@ -46,10 +46,24 @@ class BufferedSignal2<T0, T1> extends Signal2<T0, T1> {
 		while (_queue.length > 0) {
 			var v = _queue.shift();
 
-			this.value1 = v.value0;
-			this.value2 = v.value1;		
+			this.value1 = v.value1;
+			this.value2 = v.value2;		
 			_freeList.push(v);
 
+			dispatchCallbacks();
+		}
+	}
+
+	public function dispatchCollapsed() {
+		if (_queue.length > 0) {
+			sortPriority();
+			var v = _queue[_queue.length - 1];
+			this.value1 = v.value1;
+			this.value2 = v.value2;
+			while (_queue.length > 0) {
+				v = _queue.pop();
+				_freeList.push(v);
+			}
 			dispatchCallbacks();
 		}
 	}
@@ -64,7 +78,7 @@ class BufferedSignal2<T0, T1> extends Signal2<T0, T1> {
 	public override function dispatchDistinctAny(value1:T0, value2:T1) {
 		if (_queue.length > 0) {
 			var v = _queue[_queue.length - 1];
-			if (v.value0 == value1 && v.value1 == value2) {
+			if (v.value1 == value1 && v.value2 == value2) {
 				return;
 			}
 		}
@@ -78,7 +92,7 @@ class BufferedSignal2<T0, T1> extends Signal2<T0, T1> {
 	public override function dispatchDistinctAll(value1:T0, value2:T1) {
 		if (_queue.length > 0) {
 			var v = _queue[_queue.length - 1];
-			if (v.value0 == value1 || v.value1 == value2) {
+			if (v.value1 == value1 || v.value2 == value2) {
 				return;
 			}
 		}
