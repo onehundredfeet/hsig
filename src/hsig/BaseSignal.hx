@@ -20,12 +20,12 @@ class BaseSignal<TCB : SignalCallbackData> implements IBaseSignal {
 	@:noCompletion private static function __init__() {
 		untyped Object.defineProperties(BaseSignal.prototype, {
 			"numListeners": {
-				get: untyped __js__("function () { return this.get_numListeners (); }"),
-				set: untyped __js__("function (v) { return this.set_numListeners (v); }")
+				get: js.Syntax.code("function () { return this.get_numListeners (); }"),
+				set: js.Syntax.code("function (v) { return this.set_numListeners (v); }")
 			},
 			"hasListeners": {
-				get: untyped __js__("function () { return this.get_hasListeners (); }"),
-				set: untyped __js__("function (v) { return this.set_hasListeners (v); }")
+				get: js.Syntax.code("function () { return this.get_hasListeners (); }"),
+				set: js.Syntax.code("function (v) { return this.set_hasListeners (v); }")
 			},
 		});
 	}
@@ -36,7 +36,7 @@ class BaseSignal<TCB : SignalCallbackData> implements IBaseSignal {
 
 	var _fireOnAdd:Bool = false;
 
-	public function  isFireOnAdd():Bool {
+	public function isFireOnAdd():Bool {
 		return _fireOnAdd;
 	}
 
